@@ -14,14 +14,14 @@
 --    [gold_daily_stats]   ← 日別集計
 --
 -- パイプライン作成手順:
---   1. Data Engineering → Pipelines → Create pipeline
+--   1. データエンジニアリング → パイプライン → パイプラインを作成
 --   2. 設定:
---      - Pipeline name: demo_sdp_pipeline
---      - Source code: このファイルを選択
---      - Destination:
---        - Catalog: workspace
---        - Target schema: demo_sdp_<あなたの名前>
---   3. Create → Start
+--      - パイプライン名: demo_sdp_pipeline
+--      - ソースコード: このファイルを選択
+--      - 送信先:
+--        - カタログ: workspace
+--        - ターゲットスキーマ: demo_sdp_<あなたの名前>
+--   3. 作成 → 開始
 -- =============================================================================
 
 
@@ -29,7 +29,7 @@
 -- Bronze層: 生データの取り込み
 -- -----------------------------------------------------------------------------
 
-CREATE OR REFRESH MATERIALIZED VIEW bronze_trips
+CREATE MATERIALIZED VIEW bronze_trips
 COMMENT 'NYC Taxiの生データ（そのまま保存）'
 AS
 SELECT * FROM samples.nyctaxi.trips;
@@ -41,7 +41,7 @@ SELECT * FROM samples.nyctaxi.trips;
 -- - 乗車時間、マイル単価を計算
 -- -----------------------------------------------------------------------------
 
-CREATE OR REFRESH MATERIALIZED VIEW silver_trips (
+CREATE MATERIALIZED VIEW silver_trips (
   CONSTRAINT valid_fare EXPECT (fare_amount > 0) ON VIOLATION DROP ROW,
   CONSTRAINT valid_distance EXPECT (trip_distance > 0) ON VIOLATION DROP ROW
 )
@@ -69,7 +69,7 @@ FROM bronze_trips;
 -- 日別の統計サマリーを作成
 -- -----------------------------------------------------------------------------
 
-CREATE OR REFRESH MATERIALIZED VIEW gold_daily_stats
+CREATE MATERIALIZED VIEW gold_daily_stats
 COMMENT '日別統計サマリー'
 AS
 SELECT
